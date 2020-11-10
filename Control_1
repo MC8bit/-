@@ -1,0 +1,65 @@
+#include <fcntl.h> 
+#include <io.h> 
+#include <stdlib.h> 
+#include <stdio.h> 
+#include <share.h> 
+#include <iostream> 
+#include <locale.h> 
+#include <fstream> 
+using namespace std;
+char buffer[60000];
+int main(void)
+{
+	setlocale(LC_ALL, "Russian");
+	char ToFile[256];
+	cout<< "Введите путь к файлу: ";
+	cin>> ToFile;
+	ofstream ofs(ToFile); 
+	ofs.close();
+	int fh, bytesread, bytesWritten, allbr = 0;
+	cout<< "Введите текст: ";
+	cin>> buffer;
+	if (_sopen_s(&fh, ToFile, _O_RDWR | _O_CREAT,
+		_SH_DENYNO, _S_IREAD | _S_IWRITE))
+		return -1;
+		if ((bytesWritten = _write(fh, buffer, 60000)) == -1)
+		{
+			switch (errno)
+			{
+			case EBADF:
+				perror("Bad file descriptor!");
+				break;
+			case ENOSPC:
+				perror("No space left on device!");
+				break;
+			case EINVAL:
+				perror("Invalid parameter: buffer was NULL!");
+				break;
+			default:
+				
+				perror("Unexpected error!");
+			}
+		}
+	_close(fh);
+	unsigned int nbytes = 1024;
+	if (_sopen_s(&fh, ToFile, _O_RDONLY, _SH_DENYNO, 0))
+	{
+		perror("Неудалось открыть файл");
+		exit(1);
+	}
+	cout << endl << "***Вывожу данные буфера консоли***" << endl;
+	for (int i = 0; i < 60000; i++)
+	{
+		cout << buffer[i];
+	} cout << endl;
+	if ((bytesread = _read(fh, buffer, nbytes)) <= 0)
+		perror("Неудалось прочитать файл");
+	else
+		do
+		{
+			allbr += bytesread;
+			(bytesread = _read(fh, buffer, nbytes));
+		} while (bytesread != 0);
+		_close(fh);
+		printf("Прочитано %u байт из файла\n", allbr);
+}
