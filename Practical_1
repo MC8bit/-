@@ -1,0 +1,90 @@
+#include <iostream>
+#include <vector>
+#include <iomanip>
+#include <fstream>
+#include <thread>
+#include <algorithm>
+#include <windows.h>
+#include "vector_lib.h"
+#include "vector_lib.cpp"
+using namespace std;
+);
+void process(char v_n[10])
+{
+	vector<char> v[1];
+	for (int i = 0; i < 10; i++)
+	{
+		v[0].push_back(v_n[i]);
+	}
+	int count;
+	count = 1;
+	while (count != 0 )
+	{
+		count = 0;
+		for (int j = 0; j < 10; j++)
+		{
+			if (j != 9)
+			{
+				if (v[0][j + 1] < v[0][j])
+				{
+					swap(v[0][j + 1], v[0][j]);
+					count++;
+				}
+			}
+		}
+
+	}
+	char arr[10];
+	for (int j = 0; j < 10; j++)
+	{
+
+		arr[j] = v[0][j];
+	}
+	output(arr);
+	
+		for (int j = 0; j < v[0].size(); j++)
+		{
+			cout << setw(5) << v[0][j];
+		}
+	cout << endl;
+}
+
+int main()
+{
+	SetFileAttributes("output.csv", FILE_ATTRIBUTE_NORMAL);
+	char c;
+	ifstream f("123.txt"); //Открываю файл
+	vector<char> v_n[10];
+	for (int i = 0; i < 10; i++) //Заполняю векторы символами из 123.txt
+	{
+		for (int j = 0; j < 10; j++)
+		{
+			f >> c;
+			v_n[i].push_back(c);
+		}
+	}
+	for (int i = 0; i < 10; i++) //Вывожу заполненный вектор
+	{
+		for (int j = 0; j < v_n[i].size(); j++)
+		{
+			cout << setw(5) << v_n[i][j];
+		}
+		cout << endl;
+	}
+	f.close(); //Закрываю файл ввода
+	char arr[10];
+	cout << "----------------------------------------------------\n";
+	for (int i = 0; i < 10; i++)
+	{
+		for (int j = 0; j < 10; j++)
+		{
+
+			arr[j] = v_n[i][j];
+			if (j == 9)
+			{
+				thread th (process,arr);
+				th.join();
+			}
+		}
+	}
+}
